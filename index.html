@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
+<title>OKRs</title>
+
+<style>
+body {
+  font-family: Arial;
+  display: flex;
+  gap: 40px;
+  padding: 20px;
+}
+
+/* LEFT */
+.left {
+  border: 2px solid #ff4da6;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 80px);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.box {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #4CAF50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* RIGHT */
+.right {
+  display: flex;
+  flex-wrap: wrap;
+  width: 260px;
+  gap: 10px;
+}
+
+/* CIRCLE */
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: grab;
+  position: relative;
+  font-size: 10px;
+  text-align: center;
+}
+
+/* COLORS */
+.green { background: #4CAF50; }
+.blue { background: #2f5b8f; }
+
+/* TOOLTIP */
+.tooltip {
+  visibility: hidden;
+  position: absolute;
+  bottom: 70px;
+  background: black;
+  color: white;
+  padding: 5px;
+  font-size: 10px;
+  width: 120px;
+}
+
+.circle:hover .tooltip {
+  visibility: visible;
+}
+
+button {
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="left">
+  <h2>MOJE OKRs</h2>
+
+  <label>Jméno:</label><br>
+  <input id="name"><br>
+
+  <div class="grid" id="grid"></div>
+
+  <br>
+  <label>Jiné aktivity:</label><br>
+  <input id="other"><br>
+
+  <button onclick="save()">Uložit</button>
+  <button onclick="showReport()">Report (console)</button>
+  <button onclick="exportCSV()">Export CSV</button>
+</div>
+
+<div class="right" id="circles"></div>
+
+<script>
+const supabaseUrl = "https://gunyhyihyqjlhvqgbnsb.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1bnloeWloeXFqbGh2cWdibnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MjQzMDUsImV4cCI6MjA5MjAwMDMwNX0.QfXTdO5cXaps-M8_QUKI-Smnz2LV5aLOs6I-c5DR1BE";
+
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+// DATA
+const activities = [
+  {name:"Hiring", color:"green"},
+  {name:"Tesena Labs", color:"green"},
+  {name:"Test Automation", color:"green"},
+  {name:"Culture", color:"green"},
+  {name:"Win Rate", color:"green"},
+  {name:"Test Design Helper", color:"green"},
+  {name:"QE", color:"green"},
+  {name:"AI Hub", color:"green"},
+  {name:"T&E", color:"green"},
+  {name:"Sales", color:"green"},
+  {name:"People Care", color:"green"},
+  {name:"Office Management", color:"green"},
+  {name:"Marketing", color:"green"},
+  {name:"Finance", color:"green"},
+  {name:"Delivery", color:"green"},
+
+  {name:"⭐", color:"blue"},
+  {name:"👥", color:"blue"},
+  {name:"📷", color:"blue"},
+  {name:"🧪", color:"blue"},
+  {name:"📋", color:"blue"},
+  {name:"🧠", color:"blue"},
+  {name:"🎓", color:"blue"}
+];
+
+// CREATE CIRCLES
+const container = document.getElementById("circles");
+
+activities.forEach(a => {
+  const div = document.createElement("div");
+  div.className = `circle ${a.color}`;
+  div.draggable = true;
+  div.innerText = a.name;
+
+  div.innerHTML += `<div class="tooltip">Popis: ${a.name}</div>`;
+
+  div.ondragstart = e => {
+    e.dataTransfer.setData("text/html", div.outerHTML);
+  };
+
+  container.appendChild(div);
+});
+
+// GRID
+const grid = document.getElementById("grid");
+
+for (let i = 0; i < 16; i++) {
+  const box = document.createElement("div");
+  box.className = "box";
+
+  box.ondragover = e => e.preventDefault();
+
+  box.ondrop = e => {
+    e.preventDefault();
+    if (box.children.length > 0) return;
+
+    const data = e.dataTransfer.getData("text/html");
+    box.innerHTML = data;
+  };
+
+  grid.appendChild(box);
+}
+
+// SAVE
+async function save() {
+  const name = document.getElementById("name").value;
+
+  if (!name) {
+    alert("Zadej jméno");
+    return;
+  }
+
+  const boxes = document.querySelectorAll(".box");
+  const other = document.getElementById("other").value;
+
+  for (let i = 0; i < boxes.length; i++) {
+    const b = boxes[i];
+
+    if (b.innerText) {
+      await supabase.from('okr').insert({
+        name: name,
+        activity: b.innerText,
+        position: i,
+        other: other
+      });
+    }
+  }
+
+  alert("Uloženo do cloudu");
+}
+
+ 
+
+// REPORT
+function showReport() {
+  const data = JSON.parse(localStorage.getItem("okr") || "[]");
+  console.log(data);
+  alert("Report → otevři F12 (console)");
+}
+
+// CSV EXPORT
+function exportCSV() {
+  const data = JSON.parse(localStorage.getItem("okr") || "[]");
+
+  if (data.length === 0) {
+    alert("Žádná data");
+    return;
+  }
+
+  let rows = [["Jmeno", "Pozice", "Aktivita", "Jine aktivity"]];
+
+  data.forEach(entry => {
+    entry.result.forEach(r => {
+      rows.push([
+        entry.name,
+        r.position,
+        r.value,
+        entry.other || ""
+      ]);
+    });
+  });
+
+  let csvContent = rows.map(e => e.join(";")).join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "okr_report.csv";
+  link.click();
+}
+
+</script>
+
+</body>
+</html>

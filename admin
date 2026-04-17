@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<h2>Report</h2>
+
+<table border="1" id="table">
+<tr>
+  <th>Jméno</th>
+  <th>Aktivita</th>
+  <th>Pozice</th>
+  <th>Jiné</th>
+</tr>
+</table>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://gunyhyihyqjlhvqgbnsb.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1bnloeWloeXFqbGh2cWdibnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MjQzMDUsImV4cCI6MjA5MjAwMDMwNX0.QfXTdO5cXaps-M8_QUKI-Smnz2LV5aLOs6I-c5DR1BE"
+);
+
+load();
+
+async function load() {
+  const { data } = await supabase.from('okr').select('*');
+
+  const table = document.getElementById("table");
+
+  data.forEach(row => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${row.name}</td>
+      <td>${row.activity}</td>
+      <td>${row.position}</td>
+      <td>${row.other}</td>
+    `;
+
+    table.appendChild(tr);
+  });
+}
+</script>
+
+</body>
+</html>
