@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
 <h2>Report</h2>
+
+<button onclick="location.reload()">🔄 Refresh</button>
 
 <table border="1" id="table">
 <tr>
@@ -26,7 +28,18 @@ const supabase = window.supabase.createClient(
 load();
 
 async function load() {
-  const { data } = await supabase.from('okr').select('*');
+  const { data, error } = await supabase.from('okr').select('*');
+
+  if (error) {
+    console.error(error);
+    alert("Chyba při načítání dat");
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    alert("Zatím žádná data");
+    return;
+  }
 
   const table = document.getElementById("table");
 
@@ -37,7 +50,7 @@ async function load() {
       <td>${row.name}</td>
       <td>${row.activity}</td>
       <td>${row.position}</td>
-      <td>${row.other}</td>
+      <td>${row.other || ""}</td>
     `;
 
     table.appendChild(tr);
