@@ -13,7 +13,6 @@ body {
   padding: 20px;
 }
 
-/* LEFT */
 .left {
   border: 2px solid #ff4da6;
   padding: 20px;
@@ -36,7 +35,6 @@ body {
   justify-content: center;
 }
 
-/* RIGHT */
 .right {
   display: flex;
   flex-wrap: wrap;
@@ -44,7 +42,6 @@ body {
   gap: 10px;
 }
 
-/* CIRCLE */
 .circle {
   width: 60px;
   height: 60px;
@@ -59,11 +56,9 @@ body {
   text-align: center;
 }
 
-/* COLORS */
 .green { background: #4CAF50; }
 .blue { background: #2f5b8f; }
 
-/* TOOLTIP */
 .tooltip {
   visibility: hidden;
   position: absolute;
@@ -100,17 +95,24 @@ button {
   <input id="other"><br>
 
   <button onclick="save()">Uložit</button>
-  <button onclick="showReport()">Report (console)</button>
+  <button onclick="showReport()">Report</button>
   <button onclick="exportCSV()">Export CSV</button>
 </div>
 
 <div class="right" id="circles"></div>
 
 <script>
-const supabaseUrl = "https://gunyhyihyqjlhvqgbnsb.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1bnloeWloeXFqbGh2cWdibnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MjQzMDUsImV4cCI6MjA5MjAwMDMwNX0.QfXTdO5cXaps-M8_QUKI-Smnz2LV5aLOs6I-c5DR1BE";
 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+// ✅ SAFE SUPABASE INIT (už nikdy nespadne)
+if (!window.supabaseClient) {
+  window.supabaseClient = window.supabase.createClient(
+    "https://gunyhyihyqjlhvqgbnsb.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1bnloeWloeXFqbGh2cWdibnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MjQzMDUsImV4cCI6MjA5MjAwMDMwNX0.QfXTdO5cXaps-M8_QUKI-Smnz2LV5aLOs6I-c5DR1BE"
+  );
+}
+const supabase = window.supabaseClient;
+
+
 // DATA
 const activities = [
   {name:"Hiring", color:"green"},
@@ -128,7 +130,6 @@ const activities = [
   {name:"Marketing", color:"green"},
   {name:"Finance", color:"green"},
   {name:"Delivery", color:"green"},
-
   {name:"⭐", color:"blue"},
   {name:"👥", color:"blue"},
   {name:"📷", color:"blue"},
@@ -179,6 +180,7 @@ for (let i = 0; i < 16; i++) {
 // SAVE
 async function save() {
   const name = document.getElementById("name").value;
+  const other = document.getElementById("other").value;
 
   if (!name) {
     alert("Zadej jméno");
@@ -186,7 +188,6 @@ async function save() {
   }
 
   const boxes = document.querySelectorAll(".box");
-  const other = document.getElementById("other").value;
 
   for (let i = 0; i < boxes.length; i++) {
     const b = boxes[i];
@@ -201,49 +202,35 @@ async function save() {
     }
   }
 
-  alert("Uloženo do cloudu");
+  alert("Uloženo 🚀");
 }
-
- 
 
 // REPORT
-function showReport() {
-  const data = JSON.parse(localStorage.getItem("okr") || "[]");
+async function showReport() {
+  const { data } = await supabase.from('okr').select('*');
   console.log(data);
-  alert("Report → otevři F12 (console)");
+  alert("Mrkni do konzole (F12)");
 }
 
-// CSV EXPORT
-function exportCSV() {
-  const data = JSON.parse(localStorage.getItem("okr") || "[]");
+// CSV
+async function exportCSV() {
+  const { data } = await supabase.from('okr').select('*');
 
-  if (data.length === 0) {
-    alert("Žádná data");
-    return;
-  }
+  let rows = [["Jmeno","Pozice","Aktivita","Jine"]];
 
-  let rows = [["Jmeno", "Pozice", "Aktivita", "Jine aktivity"]];
-
-  data.forEach(entry => {
-    entry.result.forEach(r => {
-      rows.push([
-        entry.name,
-        r.position,
-        r.value,
-        entry.other || ""
-      ]);
-    });
+  data.forEach(r => {
+    rows.push([r.name, r.position, r.activity, r.other || ""]);
   });
 
-  let csvContent = rows.map(e => e.join(";")).join("\n");
+  let csv = rows.map(e => e.join(";")).join("\n");
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob([csv]);
   const url = URL.createObjectURL(blob);
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "okr_report.csv";
-  link.click();
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "report.csv";
+  a.click();
 }
 
 </script>
