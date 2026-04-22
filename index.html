@@ -111,7 +111,7 @@ button {
 if (!window.supabaseClient) {
   window.supabaseClient = window.supabase.createClient(
     "https://gunyhyihyqjlhvqgbnsb.supabase.co",
-    "TVŮJ_KEY"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1bnloeWloeXFqbGh2cWdibnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MjQzMDUsImV4cCI6MjA5MjAwMDMwNX0.QfXTdO5cXaps-M8_QUKI-Smnz2LV5aLOs6I-c5DR1BE"
   );
 }
 var supabase = window.supabaseClient;
@@ -119,16 +119,16 @@ var supabase = window.supabaseClient;
 
 // DATA (IKONY + TEXTY)
 const activities = [
-  {label:"Budu makat na projektu", icon:"icon/laptop.png", color:"green"},
+  {label:"Budu makat na projektu", icon:"icons/laptop.png", color:"green"},
   {label:"Udělám rozvojové aktivity", icon:"icons/student.png", color:"green"},
-  {label:"Zajedu na konferenci", icon:"icon/conference.png", color:"green"},
-  {label:"Zúčastním se focení", icon:"icon/camera.png", color:"green"},
-  {label:"Vyplním dotazníky", icon:"icon/form.png", color:"green"},
-  {label:"Půjdu alespoň na 2 celofiremní akce", icon:"icon/chat.png", color:"green"},
-  {label:"Zajdu na neofiko akci", icon:"icon/party.png", color:"green"},
-  {label:"Zajdu občas do kanceláře", icon:"icon/office.png", color:"green"},
-  {label:"Budu se o sebe starat", icon:"icon/selfcare.png", color:"green"},
-  {label:"Vytvoř si vlastní", icon:"icon/empty.png", color:"blue"}
+  {label:"Zajedu na konferenci", icon:"icons/conference.png", color:"green"},
+  {label:"Zúčastním se focení", icon:"icons/camera.png", color:"green"},
+  {label:"Vyplním dotazníky", icon:"icons/form.png", color:"green"},
+  {label:"Půjdu alespoň na 2 celofiremní akce", icon:"icons/chat.png", color:"green"},
+  {label:"Zajdu na neofiko akci", icon:"icons/party.png", color:"green"},
+  {label:"Zajdu občas do kanceláře", icon:"icons/office.png", color:"green"},
+  {label:"Budu se o sebe starat", icon:"icons/selfcare.png", color:"green"},
+  {label:"Vytvoř si vlastní", icon:"icons/empty.png", color:"blue"}
 ];
 
 // CREATE CIRCLES
