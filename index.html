@@ -170,6 +170,7 @@ const container = document.getElementById("circles");
 
 activities.forEach(a => {
   const div = document.createElement("div");
+  div.dataset.label = a.label;
   div.className = `circle ${a.color}`;
   div.draggable = true;
 
