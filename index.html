@@ -99,8 +99,6 @@ button {
   <input id="other"><br>
 
   <button onclick="save()">Uložit</button>
-  <button onclick="showReport()">Report</button>
-  <button onclick="exportCSV()">Export CSV</button>
 </div>
 
 <div class="right" id="circles"></div>
@@ -184,7 +182,23 @@ for (let i = 0; i < 16; i++) {
 
     const data = e.dataTransfer.getData("text/html");
     box.innerHTML = data;
+
+    const circle = box.querySelector(".circle");
+
+  circle.onclick = () => {
+    const clone = circle.cloneNode(true);
+
+    // znovu nastavit drag
+    clone.draggable = true;
+    clone.ondragstart = ev => {
+      ev.dataTransfer.setData("text/html", clone.outerHTML);
+    };
+
+    document.getElementById("circles").appendChild(clone);
+
+    box.innerHTML = "";
   };
+    };
 
   grid.appendChild(box);
 }
