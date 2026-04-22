@@ -105,7 +105,6 @@ body {
 
 /* hover */
 .circle:hover .tooltip-small,
-.circle:hover .tooltip-big {
   visibility: visible;
 }
 button {
@@ -132,6 +131,13 @@ button {
 </div>
 
 <div class="right" id="circles"></div>
+  <div id="sidePanel" class="side-panel">
+  <div class="panel-content">
+    <span id="closePanel" onclick="document.getElementById('sidePanel').classList.remove('open')">✖</span>
+    <h2 id="panelTitle"></h2>
+    <p id="panelText"></p>
+  </div>
+</div>
 
 <script>
 
@@ -183,22 +189,33 @@ activities.forEach(a => {
   div.dataset.label = a.label;
   div.className = `circle ${a.color}`;
   div.draggable = true;
+
+  // 👉 klik = otevře panel
   div.onclick = () => {
-  if (!a.desc) return;
+    if (!a.desc) return;
 
-  document.getElementById("panelTitle"const tooltipClass = a.desc ? "tooltip-big" : "tooltip-small";
+    document.getElementById("panelTitle").innerText = a.label;
+    document.getElementById("panelText").innerText = a.desc;
 
-div.innerHTML = `
-  ${a.icon 
-    ? `<img src="${a.icon}">` 
-    : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
-  }
-  <div class="${tooltipClass}">${a.desc || a.label}</div>
-`;).innerText = a.label;
-  document.getElementById("panelText").innerText = a.desc;
+    document.getElementById("sidePanel").classList.add("open");
+  };
 
-  document.getElementById("sidePanel").classList.add("open");
-};
+  // 👉 obsah kolečka
+  div.innerHTML = `
+    ${a.icon 
+      ? `<img src="${a.icon}">` 
+      : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
+    }
+    <div class="tooltip-small">${a.label}</div>
+  `;
+
+  // 👉 drag
+  div.ondragstart = e => {
+    e.dataTransfer.setData("text/html", div.outerHTML);
+  };
+
+  container.appendChild(div);
+});
 
   // 🔥 mimo HTML!
   const tooltipClass = a.desc ? "tooltip-big" : "tooltip-small";
