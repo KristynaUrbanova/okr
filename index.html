@@ -173,20 +173,23 @@ activities.forEach(a => {
   div.className = `circle ${a.color}`;
   div.draggable = true;
 
-  div.innerHTML = `
-  ${a.icon 
-    ? `<img src="${a.icon}">` 
-    : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
-  }
- const tooltipClass = a.desc ? "tooltip-big" : "tooltip-small";
+  // 🔥 mimo HTML!
+  const tooltipClass = a.desc ? "tooltip-big" : "tooltip-small";
 
-div.innerHTML = `
-  ${a.icon 
-    ? `<img src="${a.icon}">` 
-    : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
-  }
-  <div class="${tooltipClass}">${a.desc || a.label}</div>
-`;
+  div.innerHTML = `
+    ${a.icon 
+      ? `<img src="${a.icon}">` 
+      : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
+    }
+    <div class="${tooltipClass}">${a.desc || a.label}</div>
+  `;
+
+  div.ondragstart = e => {
+    e.dataTransfer.setData("text/html", div.outerHTML);
+  };
+
+  container.appendChild(div);
+});
 
   div.ondragstart = e => {
     e.dataTransfer.setData("text/html", div.outerHTML);
@@ -256,22 +259,6 @@ async function save() {
   }
 
   alert("Uloženo 🚀");
-
-  let rows = [["Jmeno","Aktivita","Jine"]];
-
-  data.forEach(r => {
-    rows.push([r.name, r.activity, r.other || ""]);
-  });
-
-  let csv = rows.map(e => e.join(";")).join("\n");
-
-  const blob = new Blob([csv]);
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "report.csv";
-  a.click();
 }
 
 </script>
