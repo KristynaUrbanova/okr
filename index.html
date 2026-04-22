@@ -155,9 +155,12 @@ activities.forEach(a => {
   div.draggable = true;
 
   div.innerHTML = `
-    <img src="${a.icon}">
-    <div class="tooltip">${a.label}</div>
-  `;
+  ${a.icon 
+    ? `<img src="${a.icon}">` 
+    : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
+  }
+  <div class="tooltip">${a.label}</div>
+`;
 
   div.ondragstart = e => {
     e.dataTransfer.setData("text/html", div.outerHTML);
