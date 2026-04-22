@@ -102,22 +102,6 @@ body {
 }
 
 /* velký (pro desc) */
-.tooltip-big {
-  visibility: hidden;
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: black;
-  color: white;
-  padding: 12px;
-  font-size: 13px;
-  line-height: 1.4;
-  width: 440px;
-  max-width: 90vw;
-  border-radius: 10px;
-  z-index: 1000;
-}
 
 /* hover */
 .circle:hover .tooltip-small,
@@ -202,7 +186,15 @@ activities.forEach(a => {
   div.onclick = () => {
   if (!a.desc) return;
 
-  document.getElementById("panelTitle").innerText = a.label;
+  document.getElementById("panelTitle"const tooltipClass = a.desc ? "tooltip-big" : "tooltip-small";
+
+div.innerHTML = `
+  ${a.icon 
+    ? `<img src="${a.icon}">` 
+    : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
+  }
+  <div class="${tooltipClass}">${a.desc || a.label}</div>
+`;).innerText = a.label;
   document.getElementById("panelText").innerText = a.desc;
 
   document.getElementById("sidePanel").classList.add("open");
@@ -211,13 +203,13 @@ activities.forEach(a => {
   // 🔥 mimo HTML!
   const tooltipClass = a.desc ? "tooltip-big" : "tooltip-small";
 
-  div.innerHTML = `
-    ${a.icon 
-      ? `<img src="${a.icon}">` 
-      : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
-    }
-    <div class="${tooltipClass}">${a.desc || a.label}</div>
-  `;
+ div.innerHTML = `
+  ${a.icon 
+    ? `<img src="${a.icon}">` 
+    : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
+  }
+  <div class="tooltip-small">${a.label}</div>
+`;
 
   div.ondragstart = e => {
     e.dataTransfer.setData("text/html", div.outerHTML);
