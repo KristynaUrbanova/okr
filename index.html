@@ -62,33 +62,43 @@ body {
 .green { background: #4CAF50; }
 .blue { background: #2f5b8f; }
 
-.tooltip {
+/* malý (pro ikonky) */
+.tooltip-small {
+  visibility: hidden;
+  position: absolute;
+  bottom: 70px;
+  background: black;
+  color: white;
+  padding: 6px;
+  font-size: 11px;
+  width: 140px;
+  text-align: center;
+  border-radius: 6px;
+}
+
+/* velký (pro desc) */
+.tooltip-big {
   visibility: hidden;
   position: absolute;
   bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
-
   background: black;
   color: white;
   padding: 12px;
-
   font-size: 13px;
   line-height: 1.4;
-
-  width: 420px;          /* 🔥 větší */
-  max-width: 90vw;       /* responsive */
-
-  white-space: normal;
+  width: 440px;
+  max-width: 90vw;
   border-radius: 10px;
-
   z-index: 1000;
 }
 
-.circle:hover .tooltip {
+/* hover */
+.circle:hover .tooltip-small,
+.circle:hover .tooltip-big {
   visibility: visible;
 }
-
 button {
   margin-top: 10px;
 }
@@ -168,7 +178,14 @@ activities.forEach(a => {
     ? `<img src="${a.icon}">` 
     : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
   }
-  <div class="tooltip">${a.desc || a.label}</div>
+ const tooltipClass = a.desc ? "tooltip-big" : "tooltip-small";
+
+div.innerHTML = `
+  ${a.icon 
+    ? `<img src="${a.icon}">` 
+    : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
+  }
+  <div class="${tooltipClass}">${a.desc || a.label}</div>
 `;
 
   div.ondragstart = e => {
