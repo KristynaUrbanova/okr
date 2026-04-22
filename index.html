@@ -12,7 +12,32 @@ body {
   gap: 40px;
   padding: 20px;
 }
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: -500px; /* schovaný */
+  width: 400px;
+  max-width: 90%;
+  height: 100%;
+  background: white;
+  box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+  transition: right 0.3s ease;
+  z-index: 2000;
+}
 
+.side-panel.open {
+  right: 0;
+}
+
+.panel-content {
+  padding: 20px;
+}
+
+#closePanel {
+  cursor: pointer;
+  font-size: 18px;
+  float: right;
+}
 .left {
   border: 2px solid #ff4da6;
   padding: 20px;
@@ -174,6 +199,14 @@ activities.forEach(a => {
   div.dataset.label = a.label;
   div.className = `circle ${a.color}`;
   div.draggable = true;
+  div.onclick = () => {
+  if (!a.desc) return;
+
+  document.getElementById("panelTitle").innerText = a.label;
+  document.getElementById("panelText").innerText = a.desc;
+
+  document.getElementById("sidePanel").classList.add("open");
+};
 
   // 🔥 mimo HTML!
   const tooltipClass = a.desc ? "tooltip-big" : "tooltip-small";
