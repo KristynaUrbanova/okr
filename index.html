@@ -49,11 +49,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   cursor: grab;
   position: relative;
-  font-size: 10px;
-  text-align: center;
+}
+
+.circle img {
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
 }
 
 .green { background: #4CAF50; }
@@ -67,7 +70,8 @@ body {
   color: white;
   padding: 5px;
   font-size: 10px;
-  width: 120px;
+  width: 140px;
+  text-align: center;
 }
 
 .circle:hover .tooltip {
@@ -103,40 +107,28 @@ button {
 
 <script>
 
-// ✅ SAFE SUPABASE INIT (už nikdy nespadne)
+// SUPABASE SAFE INIT
 if (!window.supabaseClient) {
   window.supabaseClient = window.supabase.createClient(
     "https://gunyhyihyqjlhvqgbnsb.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1bnloeWloeXFqbGh2cWdibnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MjQzMDUsImV4cCI6MjA5MjAwMDMwNX0.QfXTdO5cXaps-M8_QUKI-Smnz2LV5aLOs6I-c5DR1BE"
+    "TVŮJ_KEY"
   );
 }
 var supabase = window.supabaseClient;
 
 
-// DATA
+// DATA (IKONY + TEXTY)
 const activities = [
-  {name:"Hiring", color:"green"},
-  {name:"Tesena Labs", color:"green"},
-  {name:"Test Automation", color:"green"},
-  {name:"Culture", color:"green"},
-  {name:"Win Rate", color:"green"},
-  {name:"Test Design Helper", color:"green"},
-  {name:"QE", color:"green"},
-  {name:"AI Hub", color:"green"},
-  {name:"T&E", color:"green"},
-  {name:"Sales", color:"green"},
-  {name:"People Care", color:"green"},
-  {name:"Office Management", color:"green"},
-  {name:"Marketing", color:"green"},
-  {name:"Finance", color:"green"},
-  {name:"Delivery", color:"green"},
-  {name:"⭐", color:"blue"},
-  {name:"👥", color:"blue"},
-  {name:"📷", color:"blue"},
-  {name:"🧪", color:"blue"},
-  {name:"📋", color:"blue"},
-  {name:"🧠", color:"blue"},
-  {name:"🎓", color:"blue"}
+  {label:"Budu makat na projektu", icon:"icons/laptop.png", color:"green"},
+  {label:"Udělám rozvojové aktivity", icon:"icons/student.png", color:"green"},
+  {label:"Zajedu na konferenci", icon:"icons/conference.png", color:"green"},
+  {label:"Zúčastním se focení", icon:"icons/camera.png", color:"green"},
+  {label:"Vyplním dotazníky", icon:"icons/form.png", color:"green"},
+  {label:"Půjdu alespoň na 2 celofiremní akce", icon:"icons/chat.png", color:"green"},
+  {label:"Zajdu na neofiko akci", icon:"icons/party.png", color:"green"},
+  {label:"Zajdu občas do kanceláře", icon:"icons/office.png", color:"green"},
+  {label:"Budu se o sebe starat", icon:"icons/selfcare.png", color:"green"},
+  {label:"Vytvoř si vlastní", icon:"icons/empty.png", color:"blue"}
 ];
 
 // CREATE CIRCLES
@@ -146,9 +138,11 @@ activities.forEach(a => {
   const div = document.createElement("div");
   div.className = `circle ${a.color}`;
   div.draggable = true;
-  div.innerText = a.name;
 
-  div.innerHTML += `<div class="tooltip">Popis: ${a.name}</div>`;
+  div.innerHTML = `
+    <img src="${a.icon}">
+    <div class="tooltip">${a.label}</div>
+  `;
 
   div.ondragstart = e => {
     e.dataTransfer.setData("text/html", div.outerHTML);
@@ -189,14 +183,13 @@ async function save() {
 
   const boxes = document.querySelectorAll(".box");
 
-  for (let i = 0; i < boxes.length; i++) {
-    const b = boxes[i];
+  for (let b of boxes) {
+    const activity = b.querySelector(".tooltip")?.innerText;
 
-    if (b.innerText) {
+    if (activity) {
       await supabase.from('okr').insert({
         name: name,
-        activity: b.innerText,
-        position: i,
+        activity: activity,
         other: other
       });
     }
@@ -216,10 +209,10 @@ async function showReport() {
 async function exportCSV() {
   const { data } = await supabase.from('okr').select('*');
 
-  let rows = [["Jmeno","Pozice","Aktivita","Jine"]];
+  let rows = [["Jmeno","Aktivita","Jine"]];
 
   data.forEach(r => {
-    rows.push([r.name, r.position, r.activity, r.other || ""]);
+    rows.push([r.name, r.activity, r.other || ""]);
   });
 
   let csv = rows.map(e => e.join(";")).join("\n");
