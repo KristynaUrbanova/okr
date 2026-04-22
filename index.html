@@ -217,17 +217,6 @@ activities.forEach(a => {
   container.appendChild(div);
 });
 
-  // 🔥 mimo HTML!
-  const tooltipClass = a.desc ? "tooltip-big" : "tooltip-small";
-
- div.innerHTML = `
-  ${a.icon 
-    ? `<img src="${a.icon}">` 
-    : `<span style="color:white;font-size:10px;text-align:center">${a.label}</span>`
-  }
-  <div class="tooltip-small">${a.label}</div>
-`;
-
   div.ondragstart = e => {
     e.dataTransfer.setData("text/html", div.outerHTML);
   };
