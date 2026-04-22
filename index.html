@@ -189,6 +189,115 @@ activities.forEach(a => {
   div.dataset.label = a.label;
   div.className = `circle ${a.color}`;
   div.draggable = true;
+  <!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<h2>Report</h2>
+
+<button onclick="location.reload()">🔄 Refresh</button>
+
+<br><br>
+
+<input id="search" placeholder="Hledej jméno..." oninput="filterTable()">
+
+<br><br>
+
+<table border="1" id="table">
+<tr>
+  <th>Jméno</th>
+  <th>Aktivity</th>
+  <th>Jiné</th>
+</tr>
+</table>
+
+<script>
+
+// SAFE INIT
+if (!window.supabaseClient) {
+  window.supabaseClient = window.supabase.createClient(
+    "https://gunyhyihyqjlhvqgbnsb.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1bnloeWloeXFqbGh2cWdibnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MjQzMDUsImV4cCI6MjA5MjAwMDMwNX0.QfXTdO5cXaps-M8_QUKI-Smnz2LV5aLOs6I-c5DR1BE"
+  );
+}
+
+var supabase = window.supabaseClient;
+
+load();
+
+async function load() {
+  const { data, error } = await supabase
+    .from('okr')
+    .select('*');
+
+  if (error) {
+    console.error(error);
+    alert("Chyba při načítání dat");
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    alert("Zatím žádná data");
+    return;
+  }
+
+  const grouped = {};
+
+  data.forEach(row => {
+    if (!grouped[row.name]) {
+      grouped[row.name] = {
+        activities: [],
+        other: row.other
+      };
+    }
+
+    grouped[row.name].activities.push(row.activity);
+  });
+
+  const table = document.getElementById("table");
+
+  table.innerHTML = `
+    <tr>
+      <th>Jméno</th>
+      <th>Aktivity</th>
+      <th>Jiné</th>
+    </tr>
+  `;
+
+  Object.keys(grouped).forEach(name => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${name}</td>
+      <td>${grouped[name].activities.join(", ")}</td>
+      <td>${grouped[name].other || ""}</td>
+    `;
+
+    table.appendChild(tr);
+  });
+}
+
+//  SEARCH
+function filterTable() {
+  const value = document.getElementById("search").value.toLowerCase();
+  const rows = document.querySelectorAll("#table tr");
+
+  rows.forEach((row, i) => {
+    if (i === 0) return;
+
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(value) ? "" : "none";
+  });
+}
+
+</script>
+
+</body>
+</html>
 
   // 👉 klik = otevře panel
   div.onclick = () => {
