@@ -241,7 +241,7 @@ async function save() {
   const boxes = document.querySelectorAll(".box");
 
   for (let b of boxes) {
-    const activity = b.querySelector(".tooltip-small, .tooltip-big")?.innerText;
+    const activity = b.querySelector(".circle")?.dataset.label;
 
     if (activity) {
       console.log("UKLÁDÁM:", activity);
