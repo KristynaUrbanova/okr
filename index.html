@@ -188,7 +188,7 @@ activities.forEach(a => {
   const div = document.createElement("div");
   div.dataset.label = a.label;
   div.className = `circle ${a.color}`;
-  div.draggable = true;
+  div.draggable = !a.desc;
   if (a.desc) {
   div.style.cursor = "pointer";
   div.classList.add("has-desc");
