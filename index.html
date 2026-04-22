@@ -214,18 +214,6 @@ async function save() {
   }
 
   alert("Uloženo 🚀");
-}
-
-// REPORT
-async function showReport() {
-  const { data } = await supabase.from('okr').select('*');
-  console.log(data);
-  alert("Mrkni do konzole (F12)");
-}
-
-// CSV
-async function exportCSV() {
-  const { data } = await supabase.from('okr').select('*');
 
   let rows = [["Jmeno","Aktivita","Jine"]];
 
