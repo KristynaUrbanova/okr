@@ -65,16 +65,24 @@ body {
 .tooltip {
   visibility: hidden;
   position: absolute;
-  bottom: 70px;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+
   background: black;
   color: white;
-  padding: 10px;
-  font-size: 12px;
-  width: 350px;
-  max-height: 200px;
-  overflow-y: auto;
-  text-align: left;
-  border-radius: 8px;
+  padding: 12px;
+
+  font-size: 13px;
+  line-height: 1.4;
+
+  width: 320px;          /* 🔥 větší */
+  max-width: 90vw;       /* responsive */
+
+  white-space: normal;
+  border-radius: 10px;
+
+  z-index: 1000;
 }
 
 .circle:hover .tooltip {
