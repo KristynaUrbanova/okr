@@ -191,13 +191,6 @@ activities.forEach(a => {
   container.appendChild(div);
 });
 
-  div.ondragstart = e => {
-    e.dataTransfer.setData("text/html", div.outerHTML);
-  };
-
-  container.appendChild(div);
-});
-
 // GRID
 const grid = document.getElementById("grid");
 
