@@ -138,11 +138,12 @@ button {
     padding:10px;
     background:#f5f5f5;
     border-radius:10px;
-  ">
     <b>Jak na to:</b><br>
     🟦 Přetáhni aktivitu do mřížky<br>
     🟩 Klikni na zelené kolečko pro detail > přetáhni
   </div>
+  ">
+    
 
   <div id="circles"></div>
 
@@ -205,7 +206,7 @@ activities.forEach(a => {
   const div = document.createElement("div");
   div.dataset.label = a.label;
   div.className = `circle ${a.color}`;
-  div.draggable = !a.desc;
+  div.draggable = true;
   if (a.desc) {
   div.style.cursor = "pointer";
   div.classList.add("has-desc");
