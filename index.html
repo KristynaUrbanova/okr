@@ -240,14 +240,22 @@ async function save() {
   const boxes = document.querySelectorAll(".box");
 
   for (let b of boxes) {
-    const activity = b.querySelector(".tooltip")?.innerText;
+    const activity = b.querySelector(".tooltip-small, .tooltip-big")?.innerText;
 
     if (activity) {
-      await supabase.from('okr').insert({
+      console.log("UKLÁDÁM:", activity);
+
+      const { error } = await supabase.from('okr').insert({
         name: name,
         activity: activity,
         other: other
       });
+
+      if (error) {
+        console.error("❌ ERROR:", error);
+        alert("Chyba při ukládání");
+        return;
+      }
     }
   }
 
